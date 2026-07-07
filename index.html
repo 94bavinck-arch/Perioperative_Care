@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>수술 후 안내 QR</title>
+    <link rel="stylesheet" href="./styles.css?v=2" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section id="nurseView" class="screen" aria-labelledby="nurseTitle">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Bedside QR leaflet</p>
+            <h1 id="nurseTitle">수술 후 안내 생성</h1>
+          </div>
+          <span class="mode-pill">서버 저장 없음</span>
+        </header>
+
+        <form id="leafletForm" class="nurse-grid" autocomplete="off">
+          <section class="panel input-panel" aria-label="환자 안내 입력">
+            <div class="field-row two">
+              <label>
+                <span>병실</span>
+                <input id="roomInput" name="room" type="text" inputmode="text" placeholder="예: 501" maxlength="12" />
+              </label>
+              <label>
+                <span>환자 이름</span>
+                <input id="nameInput" name="patientName" type="text" placeholder="예: 홍길동" maxlength="16" />
+              </label>
+            </div>
+
+            <fieldset class="field-set">
+              <legend>마취 종류</legend>
+              <div class="segmented" role="radiogroup" aria-label="마취 종류 선택">
+                <label>
+                  <input type="radio" name="anesthesia" value="bpb" checked />
+                  <span>BPB</span>
+                </label>
+                <label>
+                  <input type="radio" name="anesthesia" value="spinal" />
+                  <span>Spinal</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="field-row time-row">
+              <label>
+                <span>병동 return 시간</span>
+                <input id="returnInput" name="returnTime" type="datetime-local" required />
+              </label>
+              <button id="nowButton" class="icon-button" type="button" title="현재 시간 입력" aria-label="현재 시간 입력">
+                <span aria-hidden="true">↺</span>
+              </button>
+            </div>
+
+            <section class="option-band" aria-label="포함할 안내">
+              <label class="check-option">
+                <input id="pcaInput" type="checkbox" checked />
+                <span>PCA</span>
+              </label>
+              <label class="check-option">
+                <input id="stockingInput" type="checkbox" checked />
+                <span>혈전예방스타킹</span>
+              </label>
+              <label class="check-option">
+                <input id="iceInput" type="checkbox" checked />
+                <span>아이스팩·거상</span>
+              </label>
+            </section>
+
+            <label class="memo-field">
+              <span>추가 메모</span>
+              <textarea id="memoInput" rows="3" maxlength="80" placeholder="예: 어지럼 호소 시 간호사 호출"></textarea>
+            </label>
+
+            <details class="settings-box">
+              <summary>웹페이지 주소</summary>
+              <label>
+                <span>QR에 들어갈 기본 주소</span>
+                <input id="baseUrlInput" type="url" />
+              </label>
+            </details>
+
+            <div class="action-row">
+              <button id="generateButton" class="primary-button" type="submit">QR 생성</button>
+              <button id="resetButton" class="secondary-button" type="button">초기화</button>
+            </div>
+          </section>
+
+          <aside class="panel preview-panel" aria-label="안내 미리보기">
+            <div class="preview-head">
+              <div>
+                <p class="eyebrow">환자 화면 미리보기</p>
+                <h2 id="previewName">환자 안내</h2>
+              </div>
+              <span id="previewAnesthesia" class="small-pill">BPB</span>
+            </div>
+
+            <div class="time-summary">
+              <div>
+                <span>물 가능</span>
+                <strong id="previewWater">-</strong>
+              </div>
+              <div>
+                <span>식사 가능</span>
+                <strong id="previewMeal">-</strong>
+              </div>
+            </div>
+
+            <ul id="previewBullets" class="preview-list"></ul>
+
+            <div id="qrResult" class="qr-result is-empty">
+              <div class="qr-box">
+                <canvas id="qrCanvas" width="300" height="300" aria-label="환자 안내 QR code"></canvas>
+              </div>
+              <p id="qrStatus">입력 후 QR을 생성하세요.</p>
+              <a id="patientLink" href="#" target="_blank" rel="noopener">환자용 페이지 열기</a>
+              <div class="qr-actions">
+                <button id="copyLinkButton" class="secondary-button" type="button">링크 복사</button>
+                <button id="downloadQrButton" class="secondary-button" type="button">QR 저장</button>
+              </div>
+            </div>
+          </aside>
+        </form>
+      </section>
+
+      <section id="patientView" class="screen patient-screen is-hidden" aria-labelledby="patientTitle">
+        <header class="patient-header">
+          <div>
+            <p id="patientRoom" class="eyebrow">수술 후 안내</p>
+            <h1 id="patientTitle">환자 안내</h1>
+          </div>
+          <span id="patientAnesthesia" class="mode-pill">BPB</span>
+        </header>
+
+        <section id="statusPanel" class="status-panel" aria-live="polite">
+          <span id="statusLabel">상태 확인 중</span>
+          <strong id="statusText">-</strong>
+          <p id="returnText">병동 도착 시간이 입력되지 않았습니다.</p>
+        </section>
+
+        <section class="timeline" aria-label="시간표">
+          <article>
+            <span>병동 도착</span>
+            <strong id="returnAt">-</strong>
+          </article>
+          <article>
+            <span>물 소량 가능</span>
+            <strong id="waterAt">-</strong>
+          </article>
+          <article>
+            <span>식사 가능</span>
+            <strong id="mealAt">-</strong>
+          </article>
+        </section>
+
+        <section id="careGuide" class="guide-list" aria-label="수술 후 안내"></section>
+
+        <section id="faqGuide" class="faq-list" aria-label="자주 묻는 질문"></section>
+
+        <section id="memoPanel" class="memo-panel is-hidden" aria-label="추가 메모">
+          <h2>추가 메모</h2>
+          <p id="memoText"></p>
+        </section>
+
+        <footer class="patient-actions">
+          <button id="saveLeafletButton" class="primary-button" type="button">이 휴대폰에 저장</button>
+          <button id="shareLeafletButton" class="secondary-button" type="button">보호자에게 공유</button>
+          <button id="downloadSummaryButton" class="secondary-button" type="button">요약 이미지 저장</button>
+        </footer>
+
+        <p class="safety-note">담당의와 병동 간호사의 설명이 우선입니다. 통증, 어지럼, 호흡곤란, 심한 두통, 피부 발적이나 가려움이 있으면 바로 간호사에게 알려주세요.</p>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
