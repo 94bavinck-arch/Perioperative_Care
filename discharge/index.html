@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f0e6" />
+    <meta name="description" content="퇴원 절차를 큰 글씨와 여러 언어로 확인하고 이미지로 저장하거나 가족에게 공유할 수 있는 안내문입니다." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="퇴원 절차 안내" />
+    <meta property="og:description" content="안전하고 편안한 퇴원을 함께 준비할게요. 6단계 퇴원 절차를 여러 언어로 확인하세요." />
+    <meta property="og:url" content="https://94bavinck-arch.github.io/Perioperative_Care/discharge/" />
+    <meta property="og:image" content="https://94bavinck-arch.github.io/Perioperative_Care/discharge/og.png" />
+    <meta property="og:image:width" content="1734" />
+    <meta property="og:image:height" content="907" />
+    <meta property="og:image:alt" content="퇴원 절차 안내 — 안전하고 편안한 퇴원을 함께 준비할게요" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>퇴원 절차 안내</title>
+    <link rel="stylesheet" href="./styles.css?v=1" />
+  </head>
+  <body>
+    <a id="skipLink" class="skip-link" href="#dischargeSteps">본문으로 바로가기</a>
+
+    <main id="guideView" class="page-shell">
+      <header class="site-header" aria-label="퇴원 안내 상단">
+        <a class="brand-mark" href="./" aria-label="퇴원 절차 안내 홈">
+          <span class="brand-icon" aria-hidden="true">✓</span>
+          <span id="brandText">퇴원 안내</span>
+        </a>
+        <div class="header-actions">
+          <button id="headerShareButton" class="icon-action" type="button">
+            <span aria-hidden="true">↗</span>
+            <span id="headerShareLabel">공유</span>
+          </button>
+          <button id="headerSaveButton" class="icon-action" type="button">
+            <span aria-hidden="true">↓</span>
+            <span id="headerSaveLabel">이미지 저장</span>
+          </button>
+        </div>
+      </header>
+
+      <nav class="language-panel" aria-labelledby="languageTitle">
+        <div class="language-heading">
+          <span aria-hidden="true">🌐</span>
+          <strong id="languageTitle">언어를 선택하세요</strong>
+        </div>
+        <div id="languageButtons" class="language-buttons" role="radiogroup" aria-label="언어 선택"></div>
+      </nav>
+
+      <section class="hero-card" aria-labelledby="pageTitle">
+        <div class="hero-copy">
+          <p id="eyebrow" class="eyebrow">퇴원 전, 순서대로 확인해주세요</p>
+          <h1 id="pageTitle">안전하고 편안한 퇴원을<br class="wide-only" /> 함께 준비할게요</h1>
+          <p id="heroIntro" class="hero-intro">주치의가 퇴원을 허락하면 아래 6단계를 순서대로 진행합니다.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <span class="sun-dot one"></span>
+          <span class="sun-dot two"></span>
+          <div class="home-shape">
+            <span class="home-roof"></span>
+            <span class="home-door">♥</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone-alert" aria-labelledby="phoneTitle">
+        <span class="phone-symbol" aria-hidden="true">☎</span>
+        <div>
+          <p id="phoneTitle">이 번호로 오는 전화를 꼭 받아주세요</p>
+          <a href="tel:028534600" aria-label="02-853-4600 전화하기">02-853-4600</a>
+          <span id="phoneHelp">심사가 끝나면 원무과에서 연락드립니다.</span>
+        </div>
+      </section>
+
+      <section class="scan-card" aria-labelledby="scanTitle">
+        <div class="section-heading compact">
+          <span class="section-icon warm" aria-hidden="true">▦</span>
+          <div>
+            <p id="scanKicker" class="section-kicker">QR CODE</p>
+            <h2 id="scanTitle">QR 안내문 이용 방법</h2>
+          </div>
+        </div>
+        <p id="scanLead" class="section-lead">휴대폰으로 언제든 다시 볼 수 있습니다.</p>
+        <ol id="scanSteps" class="scan-steps"></ol>
+        <p id="scanTip" class="soft-note"></p>
+      </section>
+
+      <section class="guide-section" aria-labelledby="procedureTitle">
+        <div class="section-heading">
+          <span class="section-icon" aria-hidden="true">6</span>
+          <div>
+            <p id="procedureKicker" class="section-kicker">DISCHARGE CHECKLIST</p>
+            <h2 id="procedureTitle">퇴원 절차</h2>
+          </div>
+        </div>
+        <p id="procedureLead" class="section-lead">주치의 퇴원 허락 후 다음 순서대로 진행해주세요.</p>
+        <div id="dischargeSteps" class="step-list" tabindex="-1"></div>
+      </section>
+
+      <section class="final-check" aria-labelledby="finalCheckTitle">
+        <div class="section-heading compact">
+          <span class="section-icon sage" aria-hidden="true">✓</span>
+          <div>
+            <p id="finalKicker" class="section-kicker">BEFORE YOU GO</p>
+            <h2 id="finalCheckTitle">퇴원 전 마지막 확인</h2>
+          </div>
+        </div>
+        <div id="finalCheckItems" class="check-grid"></div>
+      </section>
+
+      <section class="feedback-card" aria-labelledby="feedbackTitle">
+        <div class="feedback-intro">
+          <div>
+            <p id="feedbackKicker" class="section-kicker">A SMALL THANK YOU</p>
+            <h2 id="feedbackTitle">간호사에게 감사인사 전하기</h2>
+            <p id="feedbackLead">입원 중 따뜻했던 순간을 남겨주세요. 짧은 한마디도 큰 힘이 됩니다.</p>
+          </div>
+          <span class="heart-badge" aria-hidden="true">♥</span>
+        </div>
+
+        <form id="feedbackForm" novalidate>
+          <fieldset class="tag-fieldset">
+            <legend id="tagLegend">어떤 점이 고마웠나요? <span>(선택)</span></legend>
+            <div id="feedbackTags" class="feedback-tags"></div>
+          </fieldset>
+          <label class="message-field" for="feedbackMessage">
+            <span id="messageLabel">감사 메시지</span>
+            <textarea id="feedbackMessage" name="message" rows="5" maxlength="500" placeholder="예: 불안할 때 차분하게 설명해주셔서 감사했습니다." required></textarea>
+          </label>
+          <div class="privacy-note">
+            <span aria-hidden="true">ⓘ</span>
+            <p id="privacyText">이름, 병실, 환자번호, 연락처, 진단명·수술명 등 개인정보나 진료정보는 적지 마세요.</p>
+          </div>
+          <p id="feedbackModeNote" class="feedback-mode-note"></p>
+          <div class="feedback-actions">
+            <button id="sendThanksButton" class="primary-button" type="submit">
+              <span aria-hidden="true">♥</span>
+              <span id="sendThanksLabel">간호사에게 감사인사 전하기</span>
+            </button>
+            <button id="saveThanksButton" class="secondary-button" type="button">
+              <span aria-hidden="true">↓</span>
+              <span id="saveThanksLabel">감사카드 이미지 저장</span>
+            </button>
+          </div>
+          <p id="feedbackStatus" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="action-card" aria-labelledby="keepTitle">
+        <div>
+          <p id="keepKicker" class="section-kicker">KEEP THIS GUIDE</p>
+          <h2 id="keepTitle">안내문을 가족과 함께 확인하세요</h2>
+          <p id="keepLead">이미지로 보관하거나 보호자에게 링크를 보낼 수 있습니다.</p>
+        </div>
+        <div class="large-actions">
+          <button id="saveGuideButton" class="primary-button" type="button">
+            <span aria-hidden="true">↓</span>
+            <span id="saveGuideLabel">안내문 이미지 저장</span>
+          </button>
+          <button id="shareGuideButton" class="secondary-button" type="button">
+            <span aria-hidden="true">↗</span>
+            <span id="shareGuideLabel">보호자에게 공유</span>
+          </button>
+        </div>
+      </section>
+
+      <p id="carePriority" class="care-priority">병원 상황에 따라 순서나 대기시간이 달라질 수 있으며, 담당 의료진의 설명이 우선입니다.</p>
+
+      <footer class="site-footer">
+        <span id="footerText">건강한 일상으로 돌아가는 길을 응원합니다.</span>
+        <a id="posterLink" href="?poster=1">QR 안내문 인쇄</a>
+      </footer>
+    </main>
+
+    <main id="posterView" class="poster-shell is-hidden" aria-labelledby="posterTitle">
+      <section id="posterPaper" class="poster-paper">
+        <p id="posterKicker" class="poster-kicker">DISCHARGE GUIDE</p>
+        <h1 id="posterTitle">퇴원 절차,<br />휴대폰으로 편하게 확인하세요</h1>
+        <p id="posterLead">카메라로 QR 코드를 비추고 화면에 뜨는 링크를 눌러주세요.</p>
+        <div class="poster-qr-frame">
+          <canvas id="posterQrCanvas" width="480" height="480" aria-label="퇴원 안내 QR code"></canvas>
+        </div>
+        <div id="posterSteps" class="poster-steps"></div>
+        <p id="posterLanguages" class="poster-languages">🇰🇷 한국어 · 🇬🇧 English · 🇨🇳 中文 · 🇯🇵 日本語 · 🇻🇳 Tiếng Việt</p>
+        <p id="posterPhone" class="poster-phone">원무과 연락 02-853-4600</p>
+      </section>
+      <div class="poster-actions">
+        <button id="printPosterButton" class="primary-button" type="button">인쇄하기</button>
+        <button id="downloadQrButton" class="secondary-button" type="button">QR 이미지 저장</button>
+        <a id="backToGuideLink" class="text-link" href="./">안내문으로 돌아가기</a>
+      </div>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <noscript>
+      <div class="noscript-box">이 안내문을 보려면 브라우저에서 JavaScript를 허용해주세요. 원무과 연락: 02-853-4600</div>
+    </noscript>
+
+    <script src="./config.js?v=1"></script>
+    <script src="../qrcode.js?v=2.0.4"></script>
+    <script src="./app.js?v=1"></script>
+  </body>
+</html>
