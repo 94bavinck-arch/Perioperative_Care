@@ -5,6 +5,8 @@
     {
       feedbackFormUrlTemplate: "",
       feedbackEndpoint: "",
+      feedbackEndpointType: "",
+      feedbackFields: {},
     },
     window.DISCHARGE_CONFIG || {}
   );
@@ -910,18 +912,29 @@
     setFeedbackStatus(copy.sending, false);
     try {
       const formData = new FormData();
-      formData.set("message", message);
-      formData.set("tags", tags.join(", "));
-      formData.set("language", currentLanguage);
-      formData.set("source", guideUrl(currentLanguage));
-      formData.set("_subject", copy.thanksShareTitle);
+      const isGoogleForm = CONFIG.feedbackEndpointType === "google-form";
+
+      if (isGoogleForm) {
+        const fields = CONFIG.feedbackFields || {};
+        if (!fields.message) throw new Error("Google Form message field is missing");
+        formData.set(fields.message, message);
+        if (fields.tags) formData.set(fields.tags, tags.join(", "));
+      } else {
+        formData.set("message", message);
+        formData.set("tags", tags.join(", "));
+        formData.set("language", currentLanguage);
+        formData.set("source", guideUrl(currentLanguage));
+        formData.set("_subject", copy.thanksShareTitle);
+      }
 
       const response = await fetch(CONFIG.feedbackEndpoint, {
         method: "POST",
         body: formData,
-        headers: { Accept: "application/json" },
+        ...(isGoogleForm
+          ? { mode: "no-cors", cache: "no-store", referrerPolicy: "no-referrer" }
+          : { headers: { Accept: "application/json" } }),
       });
-      if (!response.ok) throw new Error("Submission failed");
+      if (!isGoogleForm && !response.ok) throw new Error("Submission failed");
       setFeedbackStatus(copy.sent, false);
       els.feedbackMessage.value = "";
       selectedTags.clear();
