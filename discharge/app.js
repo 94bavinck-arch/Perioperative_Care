@@ -90,13 +90,15 @@
       messagePlaceholder: "예: 불안할 때 차분하게 설명해주셔서 감사했습니다.",
       privacy: "이름, 병실, 환자번호, 연락처, 진단명·수술명 등 개인정보나 진료정보는 적지 마세요.",
       sendThanks: "간호사에게 감사인사 전하기",
+      sendThanksForm: "Google Form에서 제출하기",
       saveThanks: "감사카드 이미지 저장",
       feedbackModeEndpoint: "작성한 메시지가 이 페이지에서 바로 전송됩니다.",
-      feedbackModeForm: "버튼을 누르면 감사 메시지 제출 화면이 열립니다.",
+      feedbackModeForm: "버튼을 누르면 익명 Google Form이 열립니다. 내용을 확인한 뒤 마지막에 ‘제출’을 눌러주세요.",
       feedbackModeShare: "현재는 휴대폰 공유창이 열립니다. 메시지·카카오톡 등 전달할 앱을 선택해주세요.",
       messageRequired: "감사 메시지를 먼저 적어주세요.",
       sending: "전송 중…",
       sent: "따뜻한 마음이 전달되었습니다. 감사합니다.",
+      formOpened: "Google Form이 열렸습니다. 내용을 확인한 뒤 ‘제출’을 눌러주세요.",
       sendFailed: "전송하지 못했습니다. 잠시 후 다시 시도해주세요.",
       shareOpened: "전달할 앱을 선택해주세요.",
       thanksCopied: "감사 메시지를 복사했습니다.",
@@ -199,13 +201,15 @@
       messagePlaceholder: "Example: Thank you for calmly explaining everything when I felt anxious.",
       privacy: "Please do not include names, room numbers, patient numbers, contact details, diagnoses, procedures, or other personal medical information.",
       sendThanks: "Send Thanks to a Nurse",
+      sendThanksForm: "Continue to Google Form",
       saveThanks: "Save thank-you card",
       feedbackModeEndpoint: "Your message will be sent directly from this page.",
-      feedbackModeForm: "A thank-you submission page will open when you tap the button.",
+      feedbackModeForm: "An anonymous Google Form will open. Review the message and tap Submit to finish.",
       feedbackModeShare: "Your phone’s share menu will open. Choose Messages, KakaoTalk, or another way to send it.",
       messageRequired: "Please write your message first.",
       sending: "Sending…",
       sent: "Your kind message has been sent. Thank you.",
+      formOpened: "The Google Form opened. Review the message and tap Submit to finish.",
       sendFailed: "The message could not be sent. Please try again shortly.",
       shareOpened: "Choose an app to send your message.",
       thanksCopied: "The thank-you message was copied.",
@@ -308,13 +312,15 @@
       messagePlaceholder: "例如：我感到不安时，谢谢您耐心、冷静地为我说明。",
       privacy: "请勿填写姓名、病房号、患者编号、联系方式、诊断、手术名称或其他个人及诊疗信息。",
       sendThanks: "向护士表达感谢",
+      sendThanksForm: "前往 Google 表单提交",
       saveThanks: "保存感谢卡图片",
       feedbackModeEndpoint: "留言将从本页面直接发送。",
-      feedbackModeForm: "点击按钮后将打开感谢留言提交页面。",
+      feedbackModeForm: "点击按钮后将打开匿名 Google 表单。请确认内容后点击“提交”。",
       feedbackModeShare: "将打开手机分享菜单，请选择短信、KakaoTalk 或其他发送方式。",
       messageRequired: "请先填写感谢留言。",
       sending: "发送中…",
       sent: "您的暖心留言已发送，谢谢。",
+      formOpened: "Google 表单已打开。请确认内容后点击“提交”。",
       sendFailed: "留言未能发送，请稍后再试。",
       shareOpened: "请选择发送留言的应用。",
       thanksCopied: "感谢留言已复制。",
@@ -417,13 +423,15 @@
       messagePlaceholder: "例：不安なときに落ち着いて説明してくださり、ありがとうございました。",
       privacy: "氏名、病室、患者番号、連絡先、診断名、手術名などの個人情報・診療情報は入力しないでください。",
       sendThanks: "看護師に感謝を伝える",
+      sendThanksForm: "Googleフォームで送信",
       saveThanks: "感謝カードを画像保存",
       feedbackModeEndpoint: "メッセージはこのページから直接送信されます。",
-      feedbackModeForm: "ボタンを押すと、感謝メッセージの送信画面が開きます。",
+      feedbackModeForm: "ボタンを押すと匿名のGoogleフォームが開きます。内容を確認し、最後に「送信」を押してください。",
       feedbackModeShare: "スマートフォンの共有画面が開きます。メッセージやKakaoTalkなどを選んでください。",
       messageRequired: "先に感謝のメッセージをご記入ください。",
       sending: "送信中…",
       sent: "温かいお気持ちが届きました。ありがとうございます。",
+      formOpened: "Googleフォームが開きました。内容を確認し、「送信」を押してください。",
       sendFailed: "送信できませんでした。しばらくしてからもう一度お試しください。",
       shareOpened: "送信するアプリを選んでください。",
       thanksCopied: "感謝のメッセージをコピーしました。",
@@ -526,13 +534,15 @@
       messagePlaceholder: "Ví dụ: Cảm ơn điều dưỡng đã bình tĩnh giải thích khi tôi cảm thấy lo lắng.",
       privacy: "Vui lòng không ghi tên, số phòng, mã người bệnh, thông tin liên hệ, chẩn đoán, tên phẫu thuật hoặc thông tin cá nhân/y tế khác.",
       sendThanks: "Gửi lời cảm ơn đến điều dưỡng",
+      sendThanksForm: "Gửi bằng Google Form",
       saveThanks: "Lưu thiệp cảm ơn",
       feedbackModeEndpoint: "Lời nhắn sẽ được gửi trực tiếp từ trang này.",
-      feedbackModeForm: "Trang gửi lời cảm ơn sẽ mở khi quý vị nhấn nút.",
+      feedbackModeForm: "Google Form ẩn danh sẽ mở. Vui lòng kiểm tra nội dung và nhấn Gửi để hoàn tất.",
       feedbackModeShare: "Bảng chia sẻ trên điện thoại sẽ mở. Hãy chọn Tin nhắn, KakaoTalk hoặc ứng dụng khác.",
       messageRequired: "Vui lòng viết lời cảm ơn trước.",
       sending: "Đang gửi…",
       sent: "Lời nhắn ấm áp của quý vị đã được gửi. Xin cảm ơn.",
+      formOpened: "Google Form đã mở. Vui lòng kiểm tra nội dung và nhấn Gửi để hoàn tất.",
       sendFailed: "Không thể gửi lời nhắn. Vui lòng thử lại sau.",
       shareOpened: "Hãy chọn ứng dụng để gửi lời nhắn.",
       thanksCopied: "Đã sao chép lời cảm ơn.",
@@ -589,8 +599,8 @@
     [
       "skipLink", "guideView", "posterView", "brandText", "headerShareButton", "headerShareLabel",
       "headerSaveButton", "headerSaveLabel", "languageTitle", "languageButtons", "eyebrow", "pageTitle",
-      "heroIntro", "phoneTitle", "phoneHelp", "scanKicker", "scanTitle", "scanLead", "scanSteps",
-      "scanTip", "procedureKicker", "procedureTitle", "procedureLead", "dischargeSteps", "finalKicker",
+      "heroIntro", "phoneTitle", "phoneHelp", "procedureKicker", "procedureTitle", "procedureLead",
+      "dischargeSteps", "finalKicker",
       "finalCheckTitle", "finalCheckItems", "feedbackKicker", "feedbackTitle", "feedbackLead", "tagLegend",
       "feedbackTags", "messageLabel", "feedbackMessage", "privacyText", "feedbackModeNote", "feedbackForm",
       "sendThanksButton", "sendThanksLabel", "saveThanksButton", "saveThanksLabel", "feedbackStatus",
@@ -695,10 +705,6 @@
       heroIntro: copy.intro,
       phoneTitle: copy.phoneTitle,
       phoneHelp: copy.phoneHelp,
-      scanKicker: copy.scanKicker,
-      scanTitle: copy.scanTitle,
-      scanLead: copy.scanLead,
-      scanTip: copy.scanTip,
       procedureKicker: copy.procedureKicker,
       procedureTitle: copy.procedureTitle,
       procedureLead: copy.procedureLead,
@@ -709,7 +715,7 @@
       feedbackLead: copy.feedbackLead,
       messageLabel: copy.messageLabel,
       privacyText: copy.privacy,
-      sendThanksLabel: copy.sendThanks,
+      sendThanksLabel: CONFIG.feedbackFormUrlTemplate ? copy.sendThanksForm : copy.sendThanks,
       saveThanksLabel: copy.saveThanks,
       keepKicker: copy.keepKicker,
       keepTitle: copy.keepTitle,
@@ -743,7 +749,6 @@
     els.posterLink.href = posterUrl(currentLanguage);
 
     renderLanguageState();
-    renderScanSteps(copy);
     renderProcedure(copy);
     renderFinalCheck(copy);
     renderFeedbackTags(copy);
@@ -763,15 +768,6 @@
       button.setAttribute("aria-checked", button.dataset.language === currentLanguage ? "true" : "false");
     });
     els.languageButtons.setAttribute("aria-label", COPY[currentLanguage].languageTitle);
-  }
-
-  function renderScanSteps(copy) {
-    els.scanSteps.innerHTML = "";
-    copy.scanSteps.forEach((text) => {
-      const item = document.createElement("li");
-      item.textContent = text;
-      els.scanSteps.appendChild(item);
-    });
   }
 
   function renderProcedure(copy) {
@@ -891,9 +887,7 @@
         tags: tags.join(", "),
         language: currentLanguage,
       });
-      const popup = window.open(url, "_blank", "noopener,noreferrer");
-      if (popup) setFeedbackStatus(copy.sent, false);
-      else setFeedbackStatus(copy.sendFailed, true);
+      window.location.assign(url);
       return;
     }
 

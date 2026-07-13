@@ -9,29 +9,34 @@
 - 원무과 전화번호 `02-853-4600` 강조 및 전화 연결
 - 현재 언어의 안내문 PNG 저장
 - 휴대폰 공유 기능과 링크 복사 대체 동작
-- 감사 메시지 작성, 공유, 감사카드 PNG 저장
+- 감사 메시지 작성 후 익명 Google Form 제출, 감사카드 PNG 저장
 - `?poster=1` 주소에서 병동용 QR 안내문 인쇄 및 QR PNG 저장
 - 환자 개인정보를 브라우저나 서버에 저장하지 않음
 
 ## 감사 메시지 수신 연결
 
-GitHub Pages는 정적 페이지이므로 메시지를 직접 저장하지 않습니다. 현재 기본 설정은 환자의 휴대폰 공유창을 열어 메시지나 카카오톡 등으로 전달하게 합니다.
+GitHub Pages는 정적 페이지이므로 메시지를 직접 저장하지 않습니다. 현재 안내문은 Google Form에 연결되어 있습니다.
 
-간호사가 한곳에서 응답을 받으려면 `config.js`에 다음 중 하나를 연결합니다.
+환자가 안내문에서 감사 메시지와 태그를 작성하고 `Google Form에서 제출하기`를 누르면 다음 내용이 자동으로 채워진 Google Form으로 이동합니다.
 
-### Google Form 권장
+- 감사 메시지
+- 고마웠던 점
 
-병원 관리 계정으로 Google Form을 만들고 이메일 수집과 로그인 제한을 끕니다. `메시지`, `감사 태그`, `언어` 항목을 만든 뒤 사전 입력 링크를 얻어 다음처럼 설정합니다.
+환자는 Google Form에서 내용을 확인한 뒤 마지막으로 `제출`을 누릅니다. 이메일은 수집하지 않으며 Google 로그인도 요구하지 않습니다. Form 소유자는 Google Forms의 `응답` 탭에서 내용을 확인하고 새 응답 이메일 알림을 받습니다.
+
+### Google Form 연결 설정
+
+연결 주소는 `config.js`의 `feedbackFormUrlTemplate`에 저장합니다. `{{message}}`, `{{tags}}` 자리표시자는 제출 시 환자가 작성한 내용으로 바뀝니다.
 
 ```js
 window.DISCHARGE_CONFIG = {
   feedbackFormUrlTemplate:
-    "https://docs.google.com/forms/d/e/FORM_ID/viewform?usp=pp_url&entry.MESSAGE={{message}}&entry.TAGS={{tags}}&entry.LANGUAGE={{language}}",
+    "https://docs.google.com/forms/d/e/FORM_ID/viewform?usp=pp_url&entry.MESSAGE={{message}}&entry.TAGS={{tags}}",
   feedbackEndpoint: "",
 };
 ```
 
-Google에서 받은 사전 입력 링크의 실제 `entry.숫자` 값은 그대로 두고, 미리 넣은 예시 답변 부분만 `{{message}}`, `{{tags}}`, `{{language}}`로 바꿉니다. Google이 중괄호를 `%7B%7Bmessage%7D%7D`처럼 바꾸어도 동작합니다.
+Google에서 받은 사전 입력 링크의 실제 `entry.숫자` 값은 그대로 두고, 미리 넣은 예시 답변 부분만 `{{message}}`, `{{tags}}`로 바꿉니다. Google이 중괄호를 `%7B%7Bmessage%7D%7D`처럼 바꾸어도 동작합니다.
 
 ### 정적 폼 endpoint
 
