@@ -129,6 +129,8 @@
   let currentLink = "";
   let currentPayload = null;
   let liveTimer = null;
+  let returnDateKey = "";
+  let checklistInitialized = false;
 
   document.addEventListener("DOMContentLoaded", init);
 
@@ -153,6 +155,7 @@
       "roomInput",
       "nameInput",
       "returnInput",
+      "returnDateLabel",
       "nowButton",
       "pcaInput",
       "stockingInput",
@@ -175,6 +178,44 @@
       "patientLink",
       "copyLinkButton",
       "downloadQrButton",
+      "nurseChecklistSection",
+      "nurseChecklistForm",
+      "checklistRoom",
+      "checklistName",
+      "checklistReturnTime",
+      "checklistAnesthesia",
+      "vsSbp",
+      "vsDbp",
+      "vsPulse",
+      "vsRespiration",
+      "vsTemperature",
+      "vsSpo2",
+      "bstValue",
+      "cmsCirculation",
+      "cmsMotor",
+      "cmsSensory",
+      "nurseIvFluid",
+      "nurseYesetron",
+      "nursePca",
+      "splintText",
+      "nurseArmSling",
+      "nurseWarmer",
+      "nurseStocking",
+      "nurseHvac",
+      "nurseJp",
+      "nurseDrainOpen",
+      "nurseDvt",
+      "nurseFoley",
+      "nurseFoleyOpen",
+      "educationPostop",
+      "educationPt",
+      "educationElevation",
+      "educationIce",
+      "dinnerRequested",
+      "guardianMeal",
+      "nurseMemo",
+      "copyChecklistButton",
+      "clearChecklistButton",
       "patientRoom",
       "patientTitle",
       "patientAnesthesia",
@@ -210,11 +251,21 @@
       setNow();
       updatePreview();
     });
+    document.querySelectorAll("[data-time-adjust]").forEach((button) => {
+      button.addEventListener("click", () => adjustReturnTime(Number(button.dataset.timeAdjust)));
+    });
     els.resetButton.addEventListener("click", resetForm);
     els.copyLinkButton.addEventListener("click", copyCurrentLink);
     els.downloadQrButton.addEventListener("click", downloadQr);
     els.saveImageButton.addEventListener("click", saveSummaryImage);
     els.shareLeafletButton.addEventListener("click", shareLeaflet);
+    els.copyChecklistButton.addEventListener("click", copyNurseChecklist);
+    els.clearChecklistButton.addEventListener("click", clearNurseChecklist);
+    document.querySelectorAll('input[name="dinnerType"], #guardianMeal').forEach((input) => {
+      input.addEventListener("change", () => {
+        if (input.checked) els.dinnerRequested.checked = true;
+      });
+    });
     window.addEventListener("hashchange", () => {
       if (hasPatientHash()) showPatientFromHash();
     });
@@ -247,7 +298,20 @@
   }
 
   function setNow() {
-    els.returnInput.value = toDatetimeLocal(new Date());
+    setReturnTime(new Date());
+  }
+
+  function setReturnTime(date) {
+    returnDateKey = toDateKey(date);
+    els.returnInput.value = toTimeInput(date);
+    els.returnDateLabel.textContent = formatReturnDate(date);
+  }
+
+  function adjustReturnTime(minutes) {
+    const date = readReturnDateTime() || new Date();
+    date.setMinutes(date.getMinutes() + minutes);
+    setReturnTime(date);
+    updatePreview();
   }
 
   function resetForm() {
@@ -261,6 +325,9 @@
     setNow();
     currentLink = "";
     currentPayload = null;
+    checklistInitialized = false;
+    els.nurseChecklistForm.reset();
+    els.nurseChecklistSection.classList.add("is-hidden");
     els.qrResult.classList.add("is-empty");
     els.qrStatus.textContent = "입력 후 QR을 생성하세요.";
     updatePreview();
@@ -269,7 +336,7 @@
   function readForm() {
     const anesthesia = document.querySelector('input[name="anesthesia"]:checked').value;
     const guide = CARE_GUIDES[anesthesia];
-    const returnTime = parseDatetimeLocal(els.returnInput.value) || new Date();
+    const returnTime = readReturnDateTime() || new Date();
     return {
       version: "1",
       room: els.roomInput.value.trim(),
@@ -301,6 +368,9 @@
       li.textContent = text;
       els.previewBullets.appendChild(li);
     });
+    if (!els.nurseChecklistSection.classList.contains("is-hidden")) {
+      syncNurseChecklistPatient(payload);
+    }
   }
 
   function generateLeaflet() {
@@ -313,6 +383,7 @@
       els.patientLink.href = url;
       els.patientLink.textContent = "환자용 페이지 열기";
       els.qrResult.classList.remove("is-empty");
+      showNurseChecklist(payload);
       const localOnly = isLocalOnlyUrl(url);
       els.qrStatus.textContent = localOnly
         ? `${payload.room || "병실 미입력"} ${payload.name || "이름 미입력"} · 현재는 테스트 주소라 다른 휴대폰에서 열리지 않습니다.`
@@ -322,6 +393,106 @@
       els.qrResult.classList.add("is-empty");
       els.qrStatus.textContent = error.message || "QR 생성에 실패했습니다.";
       toast("입력값이 너무 길어 QR을 만들 수 없습니다.");
+    }
+  }
+
+  function showNurseChecklist(payload) {
+    syncNurseChecklistPatient(payload);
+    if (!checklistInitialized) {
+      els.nursePca.checked = payload.pca;
+      els.nurseStocking.checked = payload.stocking;
+      checklistInitialized = true;
+    }
+    els.nurseChecklistSection.classList.remove("is-hidden");
+  }
+
+  function syncNurseChecklistPatient(payload) {
+    els.checklistRoom.textContent = payload.room || "-";
+    els.checklistName.textContent = payload.name || "-";
+    els.checklistReturnTime.textContent = formatDateTime(payload.returnTime);
+    els.checklistAnesthesia.textContent = CARE_GUIDES[payload.anesthesia].label;
+  }
+
+  function clearNurseChecklist() {
+    if (!window.confirm("간호사용 기록지에 입력한 내용을 모두 지울까요?")) return;
+    els.nurseChecklistForm.reset();
+    if (currentPayload) {
+      els.nursePca.checked = currentPayload.pca;
+      els.nurseStocking.checked = currentPayload.stocking;
+      syncNurseChecklistPatient(currentPayload);
+    }
+    toast("간호사용 기록지를 비웠습니다.");
+  }
+
+  async function copyNurseChecklist() {
+    const guardian = document.querySelector('input[name="guardian"]:checked')?.value;
+    const dinnerType = document.querySelector('input[name="dinnerType"]:checked')?.value;
+    const bloodPressure = [els.vsSbp.value, els.vsDbp.value].some(Boolean)
+      ? `${els.vsSbp.value || "-"}/${els.vsDbp.value || "-"}`
+      : "-";
+    const vitalSigns = [
+      `BP ${bloodPressure}`,
+      `PR ${valueOrDash(els.vsPulse.value)}`,
+      `RR ${valueOrDash(els.vsRespiration.value)}`,
+      `BT ${valueOrDash(els.vsTemperature.value)}`,
+      `SpO2 ${valueOrDash(els.vsSpo2.value)}`,
+    ].join(", ");
+    const guardianText = guardian === "yes" ? "유" : guardian === "no" ? "무" : "미확인";
+    const lines = [
+      `병실: ${currentPayload?.room || els.roomInput.value.trim() || "-"}    환자 이름: ${currentPayload?.name || els.nameInput.value.trim() || "-"}`,
+      `마취: ${currentPayload ? CARE_GUIDES[currentPayload.anesthesia].label : "-"}    병동 도착: ${currentPayload ? formatDateTime(currentPayload.returnTime) : "-"}`,
+      "",
+      `V/S: ${vitalSigns}`,
+      `BST: ${valueOrDash(els.bstValue.value)}`,
+      `C/M/S: (${valueOrDash(els.cmsCirculation.value)} / ${valueOrDash(els.cmsMotor.value)} / ${valueOrDash(els.cmsSensory.value)})`,
+      `수액 연결 ${checkMark(els.nurseIvFluid)}`,
+      `유세트론 1@ IVS ${checkMark(els.nurseYesetron)}`,
+      `PCA ${checkMark(els.nursePca)}`,
+      `Splint: ${valueOrDash(els.splintText.value)}`,
+      `Arm sling ${checkMark(els.nurseArmSling)}`,
+      `Warmer ${checkMark(els.nurseWarmer)}`,
+      `Stocking ${checkMark(els.nurseStocking)}`,
+      `H/vac ${checkMark(els.nurseHvac)}  J-P ${checkMark(els.nurseJp)} -> Open 확인 ${checkMark(els.nurseDrainOpen)}`,
+      `DVT ${checkMark(els.nurseDvt)}`,
+      `Foley catheter ${checkMark(els.nurseFoley)} -> Open 확인 ${checkMark(els.nurseFoleyOpen)}`,
+      `보호자: ${guardianText}`,
+      `금식 및 수술 후 설명 ${checkMark(els.educationPostop)}`,
+      `다음날 물리치료 안내 ${checkMark(els.educationPt)}`,
+      `수술 부위 심장보다 높게 올려놓기 ${checkMark(els.educationElevation)}`,
+      `Ice pack 올려놓기 ${checkMark(els.educationIce)}`,
+      `저녁 식사신청 ${checkMark(els.dinnerRequested)} - 일반식 ${choiceMark(dinnerType === "regular")}  죽 ${choiceMark(dinnerType === "porridge")}  보호자식 ${checkMark(els.guardianMeal)}`,
+      `메모: ${valueOrDash(els.nurseMemo.value.trim())}`,
+    ];
+    const copied = await writeClipboardText(lines.join("\n"));
+    toast(copied ? "간호사용 기록 내용을 복사했습니다." : "내용을 복사하지 못했습니다.");
+  }
+
+  function valueOrDash(value) {
+    return String(value || "").trim() || "-";
+  }
+
+  function checkMark(input) {
+    return choiceMark(input.checked);
+  }
+
+  function choiceMark(checked) {
+    return checked ? "[x]" : "[ ]";
+  }
+
+  async function writeClipboardText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_error) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      const copied = document.execCommand("copy");
+      textarea.remove();
+      return copied;
     }
   }
 
@@ -642,15 +813,33 @@
     return new Date(date.getTime() + hours * 60 * 60 * 1000);
   }
 
-  function parseDatetimeLocal(value) {
-    if (!value) return null;
-    const date = new Date(value);
+  function readReturnDateTime() {
+    if (!els.returnInput.value) return null;
+    const dateParts = (returnDateKey || toDateKey(new Date())).split("-").map(Number);
+    const timeParts = els.returnInput.value.split(":").map(Number);
+    if (dateParts.length !== 3 || timeParts.length < 2) return null;
+    const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], timeParts[1]);
     return Number.isNaN(date.getTime()) ? null : date;
   }
 
-  function toDatetimeLocal(date) {
+  function toDateKey(date) {
     const pad = (number) => String(number).padStart(2, "0");
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  }
+
+  function toTimeInput(date) {
+    const pad = (number) => String(number).padStart(2, "0");
+    return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function formatReturnDate(date) {
+    const isToday = toDateKey(date) === toDateKey(new Date());
+    const formatted = new Intl.DateTimeFormat("ko-KR", {
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+    }).format(date);
+    return `${isToday ? "오늘 · " : ""}${formatted}`;
   }
 
   function compactDateTime(date) {

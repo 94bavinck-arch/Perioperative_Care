@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>수술 후 안내 QR</title>
-    <link rel="stylesheet" href="./styles.css?v=3" />
+    <link rel="stylesheet" href="./styles.css?v=4" />
   </head>
   <body>
     <main class="app-shell">
@@ -47,11 +47,14 @@
             <div class="field-row time-row">
               <label>
                 <span>병동 return 시간</span>
-                <input id="returnInput" name="returnTime" type="datetime-local" required />
+                <strong id="returnDateLabel" class="return-date-label"></strong>
+                <input id="returnInput" name="returnTime" type="time" step="300" required />
               </label>
+              <button class="time-step-button" type="button" data-time-adjust="-10" aria-label="10분 앞추기">-10</button>
               <button id="nowButton" class="icon-button" type="button" title="현재 시간 입력" aria-label="현재 시간 입력">
                 <span aria-hidden="true">↺</span>
               </button>
+              <button class="time-step-button" type="button" data-time-adjust="10" aria-label="10분 늦추기">+10</button>
             </div>
 
             <section class="option-band" aria-label="포함할 안내">
@@ -127,6 +130,109 @@
             </div>
           </aside>
         </form>
+
+        <section id="nurseChecklistSection" class="panel nurse-checklist is-hidden" aria-labelledby="nurseChecklistTitle">
+          <header class="checklist-header">
+            <div>
+              <p class="eyebrow">Postoperative nursing checklist</p>
+              <h2 id="nurseChecklistTitle">수술 후 간호사용 기록</h2>
+            </div>
+            <span id="checklistAnesthesia" class="small-pill">BPB</span>
+          </header>
+
+          <form id="nurseChecklistForm" autocomplete="off">
+            <div class="checklist-patient">
+              <div><span>병실</span><strong id="checklistRoom">-</strong></div>
+              <div><span>환자 이름</span><strong id="checklistName">-</strong></div>
+              <div><span>병동 도착</span><strong id="checklistReturnTime">-</strong></div>
+            </div>
+
+            <fieldset class="checklist-group">
+              <legend>V/S &amp; BST</legend>
+              <div class="vital-grid">
+                <label><span>SBP</span><input id="vsSbp" type="number" inputmode="numeric" min="0" max="300" placeholder="mmHg" /></label>
+                <label><span>DBP</span><input id="vsDbp" type="number" inputmode="numeric" min="0" max="200" placeholder="mmHg" /></label>
+                <label><span>PR</span><input id="vsPulse" type="number" inputmode="numeric" min="0" max="250" placeholder="/min" /></label>
+                <label><span>RR</span><input id="vsRespiration" type="number" inputmode="numeric" min="0" max="100" placeholder="/min" /></label>
+                <label><span>BT</span><input id="vsTemperature" type="number" inputmode="decimal" min="30" max="45" step="0.1" placeholder="°C" /></label>
+                <label><span>SpO₂</span><input id="vsSpo2" type="number" inputmode="numeric" min="0" max="100" placeholder="%" /></label>
+                <label class="bst-field"><span>BST <small>당뇨 환자</small></span><input id="bstValue" type="number" inputmode="numeric" min="0" max="1000" placeholder="mg/dL" /></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="checklist-group">
+              <legend>C / M / S</legend>
+              <div class="cms-grid">
+                <label><span>C</span><input id="cmsCirculation" type="text" maxlength="12" placeholder="입력" /></label>
+                <label><span>M</span><input id="cmsMotor" type="text" maxlength="12" placeholder="입력" /></label>
+                <label><span>S</span><input id="cmsSensory" type="text" maxlength="12" placeholder="입력" /></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="checklist-group">
+              <legend>처치 확인</legend>
+              <div class="nursing-check-grid">
+                <label class="nursing-check"><input id="nurseIvFluid" type="checkbox" /><span>수액 연결</span></label>
+                <label class="nursing-check"><input id="nurseYesetron" type="checkbox" /><span>유세트론 1@ IVS</span></label>
+                <label class="nursing-check"><input id="nursePca" type="checkbox" /><span>PCA</span></label>
+                <label class="nursing-check"><input id="nurseArmSling" type="checkbox" /><span>Arm sling</span></label>
+                <label class="nursing-check"><input id="nurseWarmer" type="checkbox" /><span>Warmer</span></label>
+                <label class="nursing-check"><input id="nurseStocking" type="checkbox" /><span>Stocking</span></label>
+                <label class="nursing-check"><input id="nurseDvt" type="checkbox" /><span>DVT</span></label>
+              </div>
+
+              <label class="wide-text-field"><span>Splint</span><input id="splintText" type="text" maxlength="50" placeholder="예: Short arm splint" /></label>
+
+              <div class="device-row">
+                <div class="device-checks">
+                  <label class="nursing-check"><input id="nurseHvac" type="checkbox" /><span>H/vac</span></label>
+                  <label class="nursing-check"><input id="nurseJp" type="checkbox" /><span>J-P</span></label>
+                </div>
+                <label class="nursing-check open-check"><input id="nurseDrainOpen" type="checkbox" /><span>Open 확인</span></label>
+              </div>
+
+              <div class="device-row">
+                <label class="nursing-check"><input id="nurseFoley" type="checkbox" /><span>Foley catheter</span></label>
+                <label class="nursing-check open-check"><input id="nurseFoleyOpen" type="checkbox" /><span>Open 확인</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="checklist-group">
+              <legend>보호자</legend>
+              <div class="segmented guardian-choice" role="radiogroup" aria-label="보호자 유무">
+                <label><input type="radio" name="guardian" value="yes" /><span>유</span></label>
+                <label><input type="radio" name="guardian" value="no" /><span>무</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="checklist-group">
+              <legend>안내 및 확인</legend>
+              <div class="education-checks">
+                <label class="nursing-check"><input id="educationPostop" type="checkbox" /><span>금식 및 수술 후 설명</span></label>
+                <label class="nursing-check"><input id="educationPt" type="checkbox" /><span>다음날 물리치료 안내</span></label>
+                <label class="nursing-check"><input id="educationElevation" type="checkbox" /><span>수술 부위 심장보다 높게 올려놓기</span></label>
+                <label class="nursing-check"><input id="educationIce" type="checkbox" /><span>Ice pack 올려놓기</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="checklist-group dinner-group">
+              <legend>저녁 식사</legend>
+              <label class="nursing-check dinner-request"><input id="dinnerRequested" type="checkbox" /><span>저녁 식사 신청</span></label>
+              <div class="dinner-options">
+                <label class="nursing-check"><input type="radio" name="dinnerType" value="regular" /><span>일반식</span></label>
+                <label class="nursing-check"><input type="radio" name="dinnerType" value="porridge" /><span>죽</span></label>
+                <label class="nursing-check"><input id="guardianMeal" type="checkbox" /><span>보호자식</span></label>
+              </div>
+            </fieldset>
+
+            <label class="checklist-memo"><span>메모</span><textarea id="nurseMemo" rows="4" maxlength="500" placeholder="추가 확인이나 인계할 내용"></textarea></label>
+
+            <div class="checklist-actions">
+              <button id="copyChecklistButton" class="primary-button" type="button">기록 내용 복사</button>
+              <button id="clearChecklistButton" class="secondary-button" type="button">기록지 비우기</button>
+            </div>
+          </form>
+        </section>
       </section>
 
       <section id="patientView" class="screen patient-screen is-hidden" aria-labelledby="patientTitle">
@@ -183,6 +289,6 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="./qrcode.js?v=2.0.4"></script>
-    <script src="./app.js?v=4"></script>
+    <script src="./app.js?v=5"></script>
   </body>
 </html>

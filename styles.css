@@ -136,8 +136,16 @@ h2 {
 }
 
 .time-row {
-  grid-template-columns: 1fr 52px;
+  grid-template-columns: minmax(0, 1fr) repeat(3, 48px);
   align-items: end;
+}
+
+.return-date-label {
+  display: block;
+  min-height: 20px;
+  margin: -3px 0 7px;
+  color: var(--primary-strong);
+  font-size: 0.82rem;
 }
 
 label span,
@@ -225,6 +233,28 @@ textarea:focus {
   color: var(--primary-strong);
   font-size: 1.35rem;
   font-weight: 900;
+}
+
+.time-step-button {
+  width: 48px;
+  height: 52px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.time-row .icon-button {
+  width: 48px;
+}
+
+.time-step-button:active,
+.icon-button:active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
 }
 
 .option-band {
@@ -448,6 +478,210 @@ textarea:focus {
   word-break: break-all;
 }
 
+.nurse-checklist {
+  margin-top: 16px;
+  padding: 20px;
+}
+
+.checklist-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.checklist-header h2 {
+  margin-bottom: 0;
+  font-size: 1.45rem;
+}
+
+.checklist-patient {
+  display: grid;
+  grid-template-columns: 0.8fr 1.15fr 1.15fr;
+  margin-bottom: 4px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.checklist-patient div {
+  min-width: 0;
+  padding: 14px;
+  border-right: 1px solid var(--line);
+}
+
+.checklist-patient div:last-child {
+  border-right: 0;
+}
+
+.checklist-patient span,
+.checklist-patient strong {
+  display: block;
+}
+
+.checklist-patient span {
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.checklist-patient strong {
+  overflow-wrap: anywhere;
+  font-size: 1.1rem;
+}
+
+.checklist-group {
+  margin: 0;
+  padding: 18px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.checklist-group legend {
+  width: 100%;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.vital-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(94px, 1fr));
+  gap: 8px;
+}
+
+.vital-grid label,
+.cms-grid label {
+  min-width: 0;
+}
+
+.vital-grid label span,
+.cms-grid label span {
+  margin-bottom: 5px;
+  font-size: 0.8rem;
+}
+
+.vital-grid small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.vital-grid input,
+.cms-grid input {
+  min-height: 46px;
+  padding: 9px 10px;
+}
+
+.cms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 540px;
+}
+
+.nursing-check-grid,
+.education-checks,
+.dinner-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.education-checks {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dinner-options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 8px;
+}
+
+.nursing-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 50px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  cursor: pointer;
+}
+
+.nursing-check input {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--primary);
+  box-shadow: none;
+}
+
+.nursing-check span {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.nursing-check:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.wide-text-field,
+.checklist-memo {
+  display: block;
+  margin-top: 12px;
+}
+
+.wide-text-field input {
+  max-width: 620px;
+}
+
+.device-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.45fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.device-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.open-check {
+  border-style: dashed;
+}
+
+.guardian-choice {
+  max-width: 360px;
+}
+
+.dinner-request {
+  max-width: 360px;
+}
+
+.checklist-memo {
+  padding-top: 18px;
+}
+
+.checklist-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
 .patient-screen {
   width: min(780px, 100%);
   margin: 0 auto;
@@ -603,6 +837,19 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  .vital-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bst-field {
+    grid-column: span 2;
+  }
+
+  .nursing-check-grid,
+  .education-checks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .topbar,
   .patient-header,
   .preview-head {
@@ -623,7 +870,71 @@ textarea:focus {
 
   .patient-actions button,
   .action-row button,
-  .qr-actions button {
+  .qr-actions button,
+  .checklist-actions button {
     flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .time-row {
+    grid-template-columns: minmax(0, 1fr) repeat(3, 44px);
+    gap: 6px;
+  }
+
+  .time-step-button,
+  .time-row .icon-button {
+    width: 44px;
+  }
+
+  .nurse-checklist {
+    padding: 16px;
+  }
+
+  .checklist-header {
+    align-items: flex-start;
+  }
+
+  .checklist-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .checklist-patient {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .checklist-patient div {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .checklist-patient div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .checklist-patient div:last-child {
+    grid-column: 1 / -1;
+    border-bottom: 0;
+  }
+
+  .vital-grid,
+  .cms-grid,
+  .nursing-check-grid,
+  .education-checks,
+  .dinner-options,
+  .device-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cms-grid {
+    max-width: none;
+  }
+
+  .cms-grid label:last-child,
+  .device-row > .nursing-check:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .device-checks {
+    grid-column: 1 / -1;
   }
 }
