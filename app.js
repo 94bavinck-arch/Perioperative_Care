@@ -690,7 +690,20 @@
   async function saveNurseChecklistImage() {
     const blob = await makeNurseChecklistImageBlob();
     if (!blob) return toast("기록 이미지를 만들지 못했습니다.");
-    downloadBlob(blob, makeFileName("postop-nursing-record", "png"));
+    const fileName = makeFileName("postop-nursing-record", "png");
+    const file = typeof File === "function" ? new File([blob], fileName, { type: "image/png" }) : null;
+    if (isIosDevice() && file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          title: "간호 기록 이미지 저장",
+          files: [file],
+        });
+        return;
+      } catch (error) {
+        if (error && error.name === "AbortError") return;
+      }
+    }
+    downloadBlob(blob, fileName);
     toast("간호 기록 이미지를 다운로드했습니다.");
   }
 
@@ -721,6 +734,11 @@
     } catch (_error) {
       return null;
     }
+  }
+
+  function isIosDevice() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent)
+      || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   }
 
   function buildNurseChecklistCanvas(data) {
