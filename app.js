@@ -191,9 +191,7 @@
       "vsTemperature",
       "vsSpo2",
       "bstValue",
-      "cmsCirculation",
-      "cmsMotor",
-      "cmsSensory",
+      "nurseCms",
       "nurseIvFluid",
       "nurseYesetron",
       "nursePca",
@@ -214,6 +212,8 @@
       "dinnerRequested",
       "guardianMeal",
       "nurseMemo",
+      "saveChecklistImageButton",
+      "shareChecklistImageButton",
       "copyChecklistButton",
       "clearChecklistButton",
       "patientRoom",
@@ -259,6 +259,8 @@
     els.downloadQrButton.addEventListener("click", downloadQr);
     els.saveImageButton.addEventListener("click", saveSummaryImage);
     els.shareLeafletButton.addEventListener("click", shareLeaflet);
+    els.saveChecklistImageButton.addEventListener("click", saveNurseChecklistImage);
+    els.shareChecklistImageButton.addEventListener("click", shareNurseChecklistImage);
     els.copyChecklistButton.addEventListener("click", copyNurseChecklist);
     els.clearChecklistButton.addEventListener("click", clearNurseChecklist);
     document.querySelectorAll('input[name="dinnerType"], #guardianMeal').forEach((input) => {
@@ -425,54 +427,86 @@
   }
 
   async function copyNurseChecklist() {
-    const guardian = document.querySelector('input[name="guardian"]:checked')?.value;
-    const dinnerType = document.querySelector('input[name="dinnerType"]:checked')?.value;
-    const bloodPressure = [els.vsSbp.value, els.vsDbp.value].some(Boolean)
-      ? `${els.vsSbp.value || "-"}/${els.vsDbp.value || "-"}`
-      : "-";
+    const data = readNurseChecklistData();
     const vitalSigns = [
-      `BP ${bloodPressure}`,
-      `PR ${valueOrDash(els.vsPulse.value)}`,
-      `RR ${valueOrDash(els.vsRespiration.value)}`,
-      `BT ${valueOrDash(els.vsTemperature.value)}`,
-      `SpO2 ${valueOrDash(els.vsSpo2.value)}`,
+      `BP ${data.vitals.bp}`,
+      `PR ${data.vitals.pulse}`,
+      `RR ${data.vitals.respiration}`,
+      `BT ${data.vitals.temperature}`,
+      `SpO2 ${data.vitals.spo2}`,
     ].join(", ");
-    const guardianText = guardian === "yes" ? "유" : guardian === "no" ? "무" : "미확인";
     const lines = [
-      `병실: ${currentPayload?.room || els.roomInput.value.trim() || "-"}    환자 이름: ${currentPayload?.name || els.nameInput.value.trim() || "-"}`,
-      `마취: ${currentPayload ? CARE_GUIDES[currentPayload.anesthesia].label : "-"}    병동 도착: ${currentPayload ? formatDateTime(currentPayload.returnTime) : "-"}`,
+      `병실: ${data.room}    환자 이름: ${data.name}`,
+      `마취: ${data.anesthesia}    병동 도착: ${data.returnTime}`,
       "",
       `V/S: ${vitalSigns}`,
-      `BST: ${valueOrDash(els.bstValue.value)}`,
-      `C/M/S: (${valueOrDash(els.cmsCirculation.value)} / ${valueOrDash(els.cmsMotor.value)} / ${valueOrDash(els.cmsSensory.value)})`,
-      `수액 연결 ${checkMark(els.nurseIvFluid)}`,
-      `유세트론 1@ IVS ${checkMark(els.nurseYesetron)}`,
-      `PCA ${checkMark(els.nursePca)}`,
-      `Splint: ${valueOrDash(els.splintText.value)}`,
-      `Arm sling ${checkMark(els.nurseArmSling)}`,
-      `Warmer ${checkMark(els.nurseWarmer)}`,
-      `Stocking ${checkMark(els.nurseStocking)}`,
-      `H/vac ${checkMark(els.nurseHvac)}  J-P ${checkMark(els.nurseJp)} -> Open 확인 ${checkMark(els.nurseDrainOpen)}`,
-      `DVT ${checkMark(els.nurseDvt)}`,
-      `Foley catheter ${checkMark(els.nurseFoley)} -> Open 확인 ${checkMark(els.nurseFoleyOpen)}`,
-      `보호자: ${guardianText}`,
-      `금식 및 수술 후 설명 ${checkMark(els.educationPostop)}`,
-      `다음날 물리치료 안내 ${checkMark(els.educationPt)}`,
-      `수술 부위 심장보다 높게 올려놓기 ${checkMark(els.educationElevation)}`,
-      `Ice pack 올려놓기 ${checkMark(els.educationIce)}`,
-      `저녁 식사신청 ${checkMark(els.dinnerRequested)} - 일반식 ${choiceMark(dinnerType === "regular")}  죽 ${choiceMark(dinnerType === "porridge")}  보호자식 ${checkMark(els.guardianMeal)}`,
-      `메모: ${valueOrDash(els.nurseMemo.value.trim())}`,
+      `BST: ${data.vitals.bst}`,
+      `CMS ${choiceMark(data.cms)}`,
+      ...data.careChecks.map((item) => `${item.label} ${choiceMark(item.checked)}`),
+      `Splint: ${data.splint}`,
+      `보호자: ${data.guardian}`,
+      ...data.educationChecks.map((item) => `${item.label} ${choiceMark(item.checked)}`),
+      `저녁 식사신청 ${choiceMark(data.dinner.requested)} - 일반식 ${choiceMark(data.dinner.type === "regular")}  죽 ${choiceMark(data.dinner.type === "porridge")}  보호자식 ${choiceMark(data.dinner.guardianMeal)}`,
+      `메모: ${data.memo}`,
     ];
     const copied = await writeClipboardText(lines.join("\n"));
     toast(copied ? "간호사용 기록 내용을 복사했습니다." : "내용을 복사하지 못했습니다.");
   }
 
-  function valueOrDash(value) {
-    return String(value || "").trim() || "-";
+  function readNurseChecklistData() {
+    const payload = currentPayload || readForm();
+    const guardian = document.querySelector('input[name="guardian"]:checked')?.value;
+    const dinnerType = document.querySelector('input[name="dinnerType"]:checked')?.value || "";
+    const bloodPressure = [els.vsSbp.value, els.vsDbp.value].some(Boolean)
+      ? `${els.vsSbp.value || "-"}/${els.vsDbp.value || "-"}`
+      : "-";
+    return {
+      room: payload.room || "-",
+      name: payload.name || "-",
+      anesthesia: CARE_GUIDES[payload.anesthesia].label,
+      returnTime: formatDateTime(payload.returnTime),
+      vitals: {
+        bp: bloodPressure,
+        pulse: valueOrDash(els.vsPulse.value),
+        respiration: valueOrDash(els.vsRespiration.value),
+        temperature: valueOrDash(els.vsTemperature.value),
+        spo2: valueOrDash(els.vsSpo2.value),
+        bst: valueOrDash(els.bstValue.value),
+      },
+      cms: els.nurseCms.checked,
+      careChecks: [
+        { label: "수액 연결", checked: els.nurseIvFluid.checked },
+        { label: "유세트론 1@ IVS", checked: els.nurseYesetron.checked },
+        { label: "PCA", checked: els.nursePca.checked },
+        { label: "Arm sling", checked: els.nurseArmSling.checked },
+        { label: "Warmer", checked: els.nurseWarmer.checked },
+        { label: "Stocking", checked: els.nurseStocking.checked },
+        { label: "DVT", checked: els.nurseDvt.checked },
+        { label: "H/vac", checked: els.nurseHvac.checked },
+        { label: "J-P", checked: els.nurseJp.checked },
+        { label: "Drain open 확인", checked: els.nurseDrainOpen.checked },
+        { label: "Foley catheter", checked: els.nurseFoley.checked },
+        { label: "Foley open 확인", checked: els.nurseFoleyOpen.checked },
+      ],
+      splint: valueOrDash(els.splintText.value),
+      guardian: guardian === "yes" ? "유" : guardian === "no" ? "무" : "미확인",
+      educationChecks: [
+        { label: "금식 및 수술 후 설명", checked: els.educationPostop.checked },
+        { label: "다음날 물리치료 안내", checked: els.educationPt.checked },
+        { label: "수술 부위 심장보다 높게 올려놓기", checked: els.educationElevation.checked },
+        { label: "Ice pack 올려놓기", checked: els.educationIce.checked },
+      ],
+      dinner: {
+        requested: els.dinnerRequested.checked,
+        type: dinnerType,
+        guardianMeal: els.guardianMeal.checked,
+      },
+      memo: valueOrDash(els.nurseMemo.value),
+    };
   }
 
-  function checkMark(input) {
-    return choiceMark(input.checked);
+  function valueOrDash(value) {
+    return String(value || "").trim() || "-";
   }
 
   function choiceMark(checked) {
@@ -651,6 +685,202 @@
     } catch (_error) {
       toast("공유할 수 없습니다. 주소창의 링크를 복사해주세요.");
     }
+  }
+
+  async function saveNurseChecklistImage() {
+    const blob = await makeNurseChecklistImageBlob();
+    if (!blob) return toast("기록 이미지를 만들지 못했습니다.");
+    downloadBlob(blob, makeFileName("postop-nursing-record", "png"));
+    toast("간호 기록 이미지를 다운로드했습니다.");
+  }
+
+  async function shareNurseChecklistImage() {
+    const blob = await makeNurseChecklistImageBlob();
+    if (!blob) return toast("기록 이미지를 만들지 못했습니다.");
+    const fileName = makeFileName("postop-nursing-record", "png");
+    const file = typeof File === "function" ? new File([blob], fileName, { type: "image/png" }) : null;
+    if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          title: "수술 후 간호 기록",
+          text: "수술 후 간호 확인 기록입니다.",
+          files: [file],
+        });
+        return;
+      } catch (error) {
+        if (error && error.name === "AbortError") return;
+      }
+    }
+    downloadBlob(blob, fileName);
+    toast("공유 기능을 사용할 수 없어 이미지를 다운로드했습니다.");
+  }
+
+  async function makeNurseChecklistImageBlob() {
+    try {
+      return await canvasToBlob(buildNurseChecklistCanvas(readNurseChecklistData()));
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function buildNurseChecklistCanvas(data) {
+    const canvas = document.createElement("canvas");
+    const width = 1080;
+    const height = 1920;
+    const contentX = 90;
+    const contentWidth = 900;
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#eef3f4";
+    ctx.fillRect(0, 0, width, height);
+    roundedRect(ctx, 45, 45, 990, 1830, 16, "#ffffff", "#d7e1e4");
+
+    ctx.fillStyle = "#16756f";
+    ctx.font = "700 28px sans-serif";
+    ctx.fillText("POSTOPERATIVE NURSING RECORD", contentX, 112);
+    ctx.fillStyle = "#172126";
+    ctx.font = "800 58px sans-serif";
+    ctx.fillText("수술 후 간호 기록", contentX, 188);
+    ctx.fillStyle = "#65747b";
+    ctx.font = "700 26px sans-serif";
+    ctx.fillText(`${data.anesthesia} · 병동 도착 ${data.returnTime}`, contentX, 238);
+
+    drawNurseInfoGrid(ctx, [
+      { label: "병실", value: data.room },
+      { label: "환자 이름", value: data.name },
+      { label: "마취", value: data.anesthesia },
+    ], contentX, 278, 3, 98);
+
+    let y = drawNurseSectionTitle(ctx, "V/S & BST", 420);
+    y = drawNurseValueGrid(ctx, [
+      { label: "BP", value: data.vitals.bp },
+      { label: "PR", value: data.vitals.pulse },
+      { label: "RR", value: data.vitals.respiration },
+      { label: "BT", value: data.vitals.temperature },
+      { label: "SpO₂", value: data.vitals.spo2 },
+      { label: "BST", value: data.vitals.bst },
+    ], contentX, y, 3, 84);
+
+    y = drawNurseSectionTitle(ctx, "처치 확인", y + 30);
+    y = drawNurseStatusGrid(ctx, [
+      { label: "CMS", checked: data.cms },
+      ...data.careChecks,
+    ], contentX, y, 4, 72);
+
+    roundedRect(ctx, contentX, y + 18, contentWidth, 82, 10, "#f8fbfb", "#d7e1e4");
+    ctx.fillStyle = "#65747b";
+    ctx.font = "700 22px sans-serif";
+    ctx.fillText("SPLINT", contentX + 22, y + 49);
+    ctx.fillStyle = "#172126";
+    fitCanvasText(ctx, data.splint, contentWidth - 170, 29, 20, "800");
+    ctx.fillText(data.splint, contentX + 150, y + 69);
+    y += 120;
+
+    y = drawNurseSectionTitle(ctx, "보호자 및 안내", y);
+    y = drawNurseStatusGrid(ctx, [
+      { label: `보호자 ${data.guardian}`, checked: data.guardian !== "미확인" },
+      ...data.educationChecks,
+    ], contentX, y, 3, 84);
+
+    y = drawNurseSectionTitle(ctx, "저녁 식사", y + 28);
+    y = drawNurseStatusGrid(ctx, [
+      { label: "식사 신청", checked: data.dinner.requested },
+      { label: "일반식", checked: data.dinner.type === "regular" },
+      { label: "죽", checked: data.dinner.type === "porridge" },
+      { label: "보호자식", checked: data.dinner.guardianMeal },
+    ], contentX, y, 4, 72);
+
+    y = drawNurseSectionTitle(ctx, "메모", y + 28);
+    ctx.fillStyle = "#314247";
+    ctx.font = "500 27px sans-serif";
+    wrapText(ctx, data.memo, contentX, y + 2, contentWidth, 38);
+
+    ctx.fillStyle = "#65747b";
+    ctx.font = "600 22px sans-serif";
+    ctx.fillText(`이미지 생성 ${formatDateTime(new Date())} · 정식 간호기록은 EMR에 입력해주세요.`, contentX, 1830);
+    return canvas;
+  }
+
+  function drawNurseSectionTitle(ctx, title, y) {
+    ctx.fillStyle = "#172126";
+    ctx.font = "800 30px sans-serif";
+    ctx.fillText(title, 90, y);
+    ctx.fillStyle = "#d7e1e4";
+    ctx.fillRect(90, y + 18, 900, 2);
+    return y + 48;
+  }
+
+  function drawNurseInfoGrid(ctx, items, x, y, columns, itemHeight) {
+    const gap = 10;
+    const itemWidth = (900 - gap * (columns - 1)) / columns;
+    items.forEach((item, index) => {
+      const itemX = x + (index % columns) * (itemWidth + gap);
+      roundedRect(ctx, itemX, y, itemWidth, itemHeight, 10, "#f8fbfb", "#d7e1e4");
+      ctx.fillStyle = "#65747b";
+      ctx.font = "700 21px sans-serif";
+      ctx.fillText(item.label, itemX + 20, y + 32);
+      ctx.fillStyle = "#172126";
+      fitCanvasText(ctx, item.value, itemWidth - 40, 31, 20, "800");
+      ctx.fillText(item.value, itemX + 20, y + 72);
+    });
+  }
+
+  function drawNurseValueGrid(ctx, items, x, y, columns, itemHeight) {
+    const gap = 10;
+    const itemWidth = (900 - gap * (columns - 1)) / columns;
+    items.forEach((item, index) => {
+      const row = Math.floor(index / columns);
+      const column = index % columns;
+      const itemX = x + column * (itemWidth + gap);
+      const itemY = y + row * (itemHeight + gap);
+      roundedRect(ctx, itemX, itemY, itemWidth, itemHeight, 10, "#f8fbfb", "#d7e1e4");
+      ctx.fillStyle = "#65747b";
+      ctx.font = "700 20px sans-serif";
+      ctx.fillText(item.label, itemX + 18, itemY + 29);
+      ctx.fillStyle = "#172126";
+      fitCanvasText(ctx, item.value, itemWidth - 36, 29, 20, "800");
+      ctx.fillText(item.value, itemX + 18, itemY + 65);
+    });
+    const rows = Math.ceil(items.length / columns);
+    return y + rows * itemHeight + (rows - 1) * gap;
+  }
+
+  function drawNurseStatusGrid(ctx, items, x, y, columns, itemHeight) {
+    const gap = 10;
+    const itemWidth = (900 - gap * (columns - 1)) / columns;
+    items.forEach((item, index) => {
+      const row = Math.floor(index / columns);
+      const column = index % columns;
+      const itemX = x + column * (itemWidth + gap);
+      const itemY = y + row * (itemHeight + gap);
+      const fill = item.checked ? "#dff2ef" : "#f8fbfb";
+      const stroke = item.checked ? "#79bdb7" : "#d7e1e4";
+      roundedRect(ctx, itemX, itemY, itemWidth, itemHeight, 10, fill, stroke);
+      ctx.fillStyle = item.checked ? "#16756f" : "#ffffff";
+      ctx.fillRect(itemX + 16, itemY + 21, 28, 28);
+      ctx.strokeStyle = item.checked ? "#16756f" : "#9caaaf";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(itemX + 16, itemY + 21, 28, 28);
+      if (item.checked) {
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "800 22px sans-serif";
+        ctx.fillText("✓", itemX + 20, itemY + 44);
+      }
+      ctx.fillStyle = "#172126";
+      ctx.font = "700 20px sans-serif";
+      wrapText(ctx, item.label, itemX + 56, itemY + 31, itemWidth - 68, 24);
+    });
+    const rows = Math.ceil(items.length / columns);
+    return y + rows * itemHeight + (rows - 1) * gap;
+  }
+
+  function fitCanvasText(ctx, text, maxWidth, startSize, minSize, weight) {
+    let size = startSize;
+    do {
+      ctx.font = `${weight} ${size}px sans-serif`;
+      size -= 1;
+    } while (size >= minSize && ctx.measureText(String(text)).width > maxWidth);
   }
 
   async function saveSummaryImage() {

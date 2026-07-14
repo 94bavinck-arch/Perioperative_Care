@@ -552,13 +552,11 @@ textarea:focus {
   gap: 8px;
 }
 
-.vital-grid label,
-.cms-grid label {
+.vital-grid label {
   min-width: 0;
 }
 
-.vital-grid label span,
-.cms-grid label span {
+.vital-grid label span {
   margin-bottom: 5px;
   font-size: 0.8rem;
 }
@@ -568,17 +566,9 @@ textarea:focus {
   font-size: 0.72rem;
 }
 
-.vital-grid input,
-.cms-grid input {
+.vital-grid input {
   min-height: 46px;
   padding: 9px 10px;
-}
-
-.cms-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  max-width: 540px;
 }
 
 .nursing-check-grid,
@@ -917,7 +907,6 @@ textarea:focus {
   }
 
   .vital-grid,
-  .cms-grid,
   .nursing-check-grid,
   .education-checks,
   .dinner-options,
@@ -925,11 +914,6 @@ textarea:focus {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .cms-grid {
-    max-width: none;
-  }
-
-  .cms-grid label:last-child,
   .device-row > .nursing-check:first-child {
     grid-column: 1 / -1;
   }

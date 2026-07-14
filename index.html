@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>수술 후 안내 QR</title>
-    <link rel="stylesheet" href="./styles.css?v=4" />
+    <link rel="stylesheet" href="./styles.css?v=5" />
   </head>
   <body>
     <main class="app-shell">
@@ -161,17 +161,9 @@
             </fieldset>
 
             <fieldset class="checklist-group">
-              <legend>C / M / S</legend>
-              <div class="cms-grid">
-                <label><span>C</span><input id="cmsCirculation" type="text" maxlength="12" placeholder="입력" /></label>
-                <label><span>M</span><input id="cmsMotor" type="text" maxlength="12" placeholder="입력" /></label>
-                <label><span>S</span><input id="cmsSensory" type="text" maxlength="12" placeholder="입력" /></label>
-              </div>
-            </fieldset>
-
-            <fieldset class="checklist-group">
               <legend>처치 확인</legend>
               <div class="nursing-check-grid">
+                <label class="nursing-check"><input id="nurseCms" type="checkbox" /><span>CMS</span></label>
                 <label class="nursing-check"><input id="nurseIvFluid" type="checkbox" /><span>수액 연결</span></label>
                 <label class="nursing-check"><input id="nurseYesetron" type="checkbox" /><span>유세트론 1@ IVS</span></label>
                 <label class="nursing-check"><input id="nursePca" type="checkbox" /><span>PCA</span></label>
@@ -228,7 +220,9 @@
             <label class="checklist-memo"><span>메모</span><textarea id="nurseMemo" rows="4" maxlength="500" placeholder="추가 확인이나 인계할 내용"></textarea></label>
 
             <div class="checklist-actions">
-              <button id="copyChecklistButton" class="primary-button" type="button">기록 내용 복사</button>
+              <button id="saveChecklistImageButton" class="primary-button" type="button">이미지 저장</button>
+              <button id="shareChecklistImageButton" class="secondary-button" type="button">간호사에게 공유</button>
+              <button id="copyChecklistButton" class="secondary-button" type="button">기록 내용 복사</button>
               <button id="clearChecklistButton" class="secondary-button" type="button">기록지 비우기</button>
             </div>
           </form>
@@ -289,6 +283,6 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="./qrcode.js?v=2.0.4"></script>
-    <script src="./app.js?v=5"></script>
+    <script src="./app.js?v=6"></script>
   </body>
 </html>
