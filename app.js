@@ -126,6 +126,8 @@
   };
 
   const els = {};
+  const PATIENT_FONT_STORAGE_KEY = "postop-patient-font-size";
+  const PATIENT_FONT_SIZES = ["normal", "large", "xlarge"];
   let currentLink = "";
   let currentPayload = null;
   let liveTimer = null;
@@ -139,6 +141,7 @@
     bindEvents();
     setDefaultBaseUrl();
     setNow();
+    initializePatientFontSize();
     if (hasPatientHash()) {
       showPatientFromHash();
     } else {
@@ -254,6 +257,9 @@
     document.querySelectorAll("[data-time-adjust]").forEach((button) => {
       button.addEventListener("click", () => adjustReturnTime(Number(button.dataset.timeAdjust)));
     });
+    document.querySelectorAll("[data-patient-font-size]").forEach((button) => {
+      button.addEventListener("click", () => setPatientFontSize(button.dataset.patientFontSize, true));
+    });
     els.resetButton.addEventListener("click", resetForm);
     els.copyLinkButton.addEventListener("click", copyCurrentLink);
     els.downloadQrButton.addEventListener("click", downloadQr);
@@ -282,6 +288,30 @@
     clearInterval(liveTimer);
     els.nurseView.classList.remove("is-hidden");
     els.patientView.classList.add("is-hidden");
+  }
+
+  function initializePatientFontSize() {
+    let savedSize = "";
+    try {
+      savedSize = window.localStorage.getItem(PATIENT_FONT_STORAGE_KEY) || "";
+    } catch (_error) {
+      savedSize = "";
+    }
+    setPatientFontSize(PATIENT_FONT_SIZES.includes(savedSize) ? savedSize : "large", false);
+  }
+
+  function setPatientFontSize(size, persist) {
+    const nextSize = PATIENT_FONT_SIZES.includes(size) ? size : "large";
+    els.patientView.dataset.fontSize = nextSize;
+    document.querySelectorAll("[data-patient-font-size]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.patientFontSize === nextSize));
+    });
+    if (!persist) return;
+    try {
+      window.localStorage.setItem(PATIENT_FONT_STORAGE_KEY, nextSize);
+    } catch (_error) {
+      // The setting still applies for the current page when storage is unavailable.
+    }
   }
 
   function showPatientFromHash() {

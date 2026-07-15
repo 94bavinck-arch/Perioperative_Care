@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>수술 후 안내 QR</title>
-    <link rel="stylesheet" href="./styles.css?v=5" />
+    <link rel="stylesheet" href="./styles.css?v=6" />
   </head>
   <body>
     <main class="app-shell">
@@ -229,7 +229,7 @@
         </section>
       </section>
 
-      <section id="patientView" class="screen patient-screen is-hidden" aria-labelledby="patientTitle">
+      <section id="patientView" class="screen patient-screen is-hidden" data-font-size="large" aria-labelledby="patientTitle">
         <header class="patient-header">
           <div>
             <p id="patientRoom" class="eyebrow">수술 후 안내</p>
@@ -237,6 +237,15 @@
           </div>
           <span id="patientAnesthesia" class="mode-pill">BPB</span>
         </header>
+
+        <section class="patient-font-toolbar" aria-label="글자 크기">
+          <span>글자 크기</span>
+          <div class="font-size-segmented" role="group" aria-label="글자 크기 선택">
+            <button type="button" data-patient-font-size="normal" aria-label="보통 글자" aria-pressed="false"><span aria-hidden="true">가</span></button>
+            <button type="button" data-patient-font-size="large" aria-label="큰 글자" aria-pressed="true"><span aria-hidden="true">가</span></button>
+            <button type="button" data-patient-font-size="xlarge" aria-label="아주 큰 글자" aria-pressed="false"><span aria-hidden="true">가</span></button>
+          </div>
+        </section>
 
         <section id="statusPanel" class="status-panel" aria-live="polite">
           <span id="statusLabel">상태 확인 중</span>
@@ -283,6 +292,6 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="./qrcode.js?v=2.0.4"></script>
-    <script src="./app.js?v=7"></script>
+    <script src="./app.js?v=8"></script>
   </body>
 </html>
